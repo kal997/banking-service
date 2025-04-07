@@ -11,10 +11,10 @@ import (
 
 func Start(){
 	
-	http.HandleFunc("/customers", getAllCustomers)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/customers", getAllCustomers)
 
 	fmt.Println("starting server ..")
-
-	log.Fatal(http.ListenAndServe(":8001", nil))
+	log.Fatal(http.ListenAndServe(":8001", mux))
 
 }
