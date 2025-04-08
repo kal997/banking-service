@@ -4,24 +4,23 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"net/http"
-	
+
+	"github.com/kal997/banking/service"
 )
 
-//same data transfer objects and it can handle different encodings/decodings
-
-type Customer struct {
-	Name    string `json:"name" xml:"name"`
-	City    string `json:"city" xml:"city"`
-	ZipCode string `json:"zipcode" xml:"zipcode"`
+// a handler must have dependecy on the service (the interface)
+// we will create a concrete impementation
+type CustomerHandler struct {
+	service service.CustomerService // depends on service port
 }
 
-func getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	customers := []Customer{
-		{Name: "khaled", City: "egypt", ZipCode: "1123"},
-		{Name: "ahmed", City: "italy", ZipCode: "7899"},
-	}
+// we pass CustomerHandler as a reciver to the GetAllCustomers http handler
+// and inside it we use the service interface to get the customers
+func (ch *CustomerHandler) GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 
-	if "application/xml" == r.Header.Get("Content-Type") {
+	customers, _ := ch.service.GetAllCustomers()
+
+	if r.Header.Get("Content-Type") == "application/xml" {
 		w.Header().Add("Content-Type", "application/xml")
 		xml.NewEncoder(w).Encode(customers)
 
