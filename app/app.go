@@ -6,15 +6,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
 
 func Start(){
 	
-	mux := http.NewServeMux()
-	mux.HandleFunc("/customers", getAllCustomers)
+	router := mux.NewRouter()
+	router.HandleFunc("/customers", getAllCustomers)
 
 	fmt.Println("starting server ..")
-	log.Fatal(http.ListenAndServe(":8001", mux))
+	log.Fatal(http.ListenAndServe(":8001", router))
 
 }
