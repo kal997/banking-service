@@ -17,7 +17,9 @@ func Start() {
 		// stub repo (instead of DB)
 		// Default Service (the main business logic)
 
-	ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryStub())} 
+	//ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryStub())} 
+	ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryDb())} 
+	
 
 	router := mux.NewRouter()
 	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet) //  method matcher
