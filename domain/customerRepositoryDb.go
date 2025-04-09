@@ -28,13 +28,21 @@ func (s CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 	return &c, nil
 }
 
-func (s CustomerRepositoryDb) FindAll() ([]Customer, error) {
+func (s CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
 
-	findAllSql := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers"
-	rows, err := s.client.Query(findAllSql)
+	var rows *sql.Rows
+	var err error
+	if status == "" {
+		findAllSql := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers"
+		rows, err = s.client.Query(findAllSql)
+	} else {
+		findAllSql := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers WHERE status = ?"
+		rows, err = s.client.Query(findAllSql, status)
+	}
+
 	if err != nil {
 		log.Println("error while query customer table, ", err.Error())
-		return nil, err
+		return nil, errs.NewNotExpectedError("database Connection Error")
 	}
 
 	customers := make([]Customer, 0)
@@ -43,7 +51,7 @@ func (s CustomerRepositoryDb) FindAll() ([]Customer, error) {
 		err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DataofBirth, &c.Status)
 		if err != nil {
 			log.Println("error while query scanning customers, ", err.Error())
-			return nil, err
+			return nil, errs.NewNotExpectedError(err.Error())
 		}
 		customers = append(customers, c)
 	}

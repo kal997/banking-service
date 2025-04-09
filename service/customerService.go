@@ -10,8 +10,8 @@ import (
 type CustomerService interface {
 
 	// one of the behaviours
-	GetAllCustomers() ([]domain.Customer, error)
+	GetAllCustomers(string) ([]domain.Customer, *errs.AppError)
 
 	GetCustomer(string) (*domain.Customer, *errs.AppError)
-}
 
+}

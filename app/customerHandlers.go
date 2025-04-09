@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"encoding/xml"
 	"log"
 	"net/http"
 
@@ -21,18 +20,13 @@ type CustomerHandler struct {
 // and inside it we use the service interface to get the customers
 func (ch *CustomerHandler) GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 
-	customers, _ := ch.service.GetAllCustomers()
-
-	if r.Header.Get("Content-Type") == "application/xml" {
-		w.Header().Add("Content-Type", "application/xml")
-		xml.NewEncoder(w).Encode(customers)
-
+	status := r.URL.Query().Get("status")
+	customers, appError := ch.service.GetAllCustomers(status)
+	if appError != nil {
+		writeResponse(w, appError.Code, appError.AsMessage())
 	} else {
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(customers)
-
+		writeResponse(w, http.StatusOK, customers)
 	}
-
 }
 
 func (ch *CustomerHandler) GetCustomer(w http.ResponseWriter, r *http.Request) {
@@ -47,6 +41,7 @@ func (ch *CustomerHandler) GetCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
 
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")

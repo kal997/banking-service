@@ -14,19 +14,16 @@ func Start() {
 
 	// wiring
 	// we choose :
-		// stub repo (instead of DB)
-		// Default Service (the main business logic)
+	// stub repo (instead of DB)
+	// Default Service (the main business logic)
 
-	//ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryStub())} 
-	ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryDb())} 
-	
+	//ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryStub())}
+	ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryDb())}
 
 	router := mux.NewRouter()
-	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet) //  method matcher
+	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet)                  //  method matcher
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.GetCustomer).Methods(http.MethodGet) //  method matcher
-	
-	
-	
+
 	fmt.Println("starting server ..")
 	log.Fatal(http.ListenAndServe(":8001", router))
 
