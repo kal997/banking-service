@@ -4,26 +4,29 @@ import (
 	"database/sql"
 	"log"
 	"time"
+
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/kal997/banking/errs"
 )
 
 type CustomerRepositoryDb struct {
-	client    *sql.DB
+	client *sql.DB
 }
 
-
-func (s CustomerRepositoryDb)ById(id string) (*Customer, error){
+func (s CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 	findOne := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers WHERE customer_id = ?"
 	row := s.client.QueryRow(findOne, id)
 	var c Customer
 	err := row.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DataofBirth, &c.Status)
-	if err != nil{
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError("Customer Not Found")
+		}
 		log.Println("error while scan customer, ", err.Error())
-		return nil, err
+		return nil, errs.NewNotExpectedError("unexpected database error")
 	}
 	return &c, nil
 }
-
 
 func (s CustomerRepositoryDb) FindAll() ([]Customer, error) {
 
@@ -46,7 +49,6 @@ func (s CustomerRepositoryDb) FindAll() ([]Customer, error) {
 	}
 	return customers, nil
 }
-
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
 

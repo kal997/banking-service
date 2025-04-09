@@ -1,7 +1,9 @@
 package service
 
-import 	"github.com/kal997/banking/domain"
-
+import (
+	"github.com/kal997/banking/domain"
+	"github.com/kal997/banking/errs"
+)
 
 // the implementaion of the CustomerService interface
 type DefaultCustomerService struct {
@@ -23,6 +25,6 @@ func NewCustomerService(repo domain.CustomerRepository) DefaultCustomerService{
 
 
 
-func (dcs DefaultCustomerService) GetCustomer(id string) (*domain.Customer, error){
+func (dcs DefaultCustomerService) GetCustomer(id string) (*domain.Customer, *errs.AppError){
 	return dcs.repo.ById(id)
 }

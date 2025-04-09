@@ -1,5 +1,7 @@
 package domain // bussiness side/domain -> repo interface
 
+import "github.com/kal997/banking/errs"
+
 type Customer struct {
 	Id          string
 	Name        string
@@ -9,15 +11,11 @@ type Customer struct {
 	Status      string
 }
 
-
 // the interface == port
 
-type CustomerRepository interface{
+type CustomerRepository interface {
 
 	// the method that has to be implemented in order to satisfy the interface
 	FindAll() ([]Customer, error)
-	ById(string) (*Customer, error)
+	ById(string) (*Customer, *errs.AppError)
 }
-
-
-
