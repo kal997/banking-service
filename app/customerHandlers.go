@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"encoding/xml"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -39,17 +40,20 @@ func (ch *CustomerHandler) GetCustomer(w http.ResponseWriter, r *http.Request) {
 	id := vars["customer_id"]
 	customer, appErr := ch.service.GetCustomer(id)
 	if appErr != nil {
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(appErr.Code)
-		json.NewEncoder(w).Encode(appErr.AsMessage())
-		return
+		writeResponse(w, appErr.Code, appErr.AsMessage())
+	} else {
+
+		writeResponse(w, http.StatusOK, customer)
 	}
 
+}
+
+func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(customer)
+	w.WriteHeader(code)
+	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		log.Println("Encode ", data, "failed with err ", err)
+		panic(err)
 	}
-
 }
