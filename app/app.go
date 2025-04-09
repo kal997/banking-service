@@ -23,6 +23,8 @@ func Start() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet) //  method matcher
+	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.GetCustomer).Methods(http.MethodGet) //  method matcher
+	
 	
 	
 	fmt.Println("starting server ..")

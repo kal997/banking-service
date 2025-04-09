@@ -16,6 +16,7 @@ type CustomerRepository interface{
 
 	// the method that has to be implemented in order to satisfy the interface
 	FindAll() ([]Customer, error)
+	ById(string) (*Customer, error)
 }
 
 

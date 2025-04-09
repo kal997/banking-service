@@ -22,3 +22,7 @@ func NewCustomerService(repo domain.CustomerRepository) DefaultCustomerService{
 
 
 
+
+func (dcs DefaultCustomerService) GetCustomer(id string) (*domain.Customer, error){
+	return dcs.repo.ById(id)
+}

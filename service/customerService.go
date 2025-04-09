@@ -10,5 +10,7 @@ type CustomerService interface {
 
 	// one of the behaviours
 	GetAllCustomers() ([]domain.Customer, error)
+	
+	GetCustomer(string) (*domain.Customer, error)
 }
 

@@ -12,6 +12,19 @@ type CustomerRepositoryDb struct {
 }
 
 
+func (s CustomerRepositoryDb)ById(id string) (*Customer, error){
+	findOne := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers WHERE customer_id = ?"
+	row := s.client.QueryRow(findOne, id)
+	var c Customer
+	err := row.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DataofBirth, &c.Status)
+	if err != nil{
+		log.Println("error while scan customer, ", err.Error())
+		return nil, err
+	}
+	return &c, nil
+}
+
+
 func (s CustomerRepositoryDb) FindAll() ([]Customer, error) {
 
 	findAllSql := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers"
