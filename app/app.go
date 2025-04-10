@@ -1,12 +1,11 @@
 package app
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/kal997/banking/domain"
+	"github.com/kal997/banking/logger"
 	"github.com/kal997/banking/service"
 )
 
@@ -24,7 +23,7 @@ func Start() {
 	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet)                  //  method matcher
 	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.GetCustomer).Methods(http.MethodGet) //  method matcher
 
-	fmt.Println("starting server ..")
-	log.Fatal(http.ListenAndServe(":8001", router))
+	logger.Info("starting server ..")
+	logger.Fatal(http.ListenAndServe(":8001", router).Error())
 
 }

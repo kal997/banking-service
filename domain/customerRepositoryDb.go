@@ -2,11 +2,11 @@ package domain
 
 import (
 	"database/sql"
-	"log"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/kal997/banking/errs"
+	"github.com/kal997/banking/logger"
 )
 
 type CustomerRepositoryDb struct {
@@ -22,7 +22,7 @@ func (s CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 		if err == sql.ErrNoRows {
 			return nil, errs.NewNotFoundError("Customer Not Found")
 		}
-		log.Println("error while scan customer, ", err.Error())
+		logger.Error("error while scan customer, " + err.Error())
 		return nil, errs.NewNotExpectedError("unexpected database error")
 	}
 	return &c, nil
@@ -41,7 +41,7 @@ func (s CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 	}
 
 	if err != nil {
-		log.Println("error while query customer table, ", err.Error())
+		logger.Error("error while query customer table, " + err.Error())
 		return nil, errs.NewNotExpectedError("database Connection Error")
 	}
 
@@ -50,7 +50,7 @@ func (s CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 		var c Customer
 		err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DataofBirth, &c.Status)
 		if err != nil {
-			log.Println("error while query scanning customers, ", err.Error())
+			logger.Error("error while query scanning customers, " + err.Error())
 			return nil, errs.NewNotExpectedError(err.Error())
 		}
 		customers = append(customers, c)
@@ -60,7 +60,7 @@ func (s CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
 
-	client, err := sql.Open("mysql", "root:0000@/banking")
+	client, err := sql.Open("mysql", "root:00000@/banking")
 	if err != nil {
 		panic(err)
 	}

@@ -2,11 +2,11 @@ package app
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
+	"github.com/kal997/banking/logger"
 	"github.com/kal997/banking/service"
 )
 
@@ -42,13 +42,12 @@ func (ch *CustomerHandler) GetCustomer(w http.ResponseWriter, r *http.Request) {
 
 }
 
-
 func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
-		log.Println("Encode ", data, "failed with err ", err)
+		logger.Error("Encode failed with err "+ err.Error())
 		panic(err)
 	}
 }
