@@ -1,7 +1,7 @@
 package service // user -> the domain interface
 
 import (
-	"github.com/kal997/banking/domain"
+	"github.com/kal997/banking/dto"
 	"github.com/kal997/banking/errs"
 )
 
@@ -10,8 +10,7 @@ import (
 type CustomerService interface {
 
 	// one of the behaviours
-	GetAllCustomers(string) ([]domain.Customer, *errs.AppError)
+	GetAllCustomers(string) ([]dto.CustomerResponse, *errs.AppError)
 
-	GetCustomer(string) (*domain.Customer, *errs.AppError)
-
+	GetCustomer(string) (*dto.CustomerResponse, *errs.AppError)
 }

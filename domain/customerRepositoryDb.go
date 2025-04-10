@@ -5,19 +5,19 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"github.com/kal997/banking/errs"
 	"github.com/kal997/banking/logger"
 )
 
 type CustomerRepositoryDb struct {
-	client *sql.DB
+	client *sqlx.DB
 }
 
 func (s CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 	findOne := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers WHERE customer_id = ?"
-	row := s.client.QueryRow(findOne, id)
 	var c Customer
-	err := row.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DataofBirth, &c.Status)
+	err := s.client.Get(&c, findOne, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errs.NewNotFoundError("Customer Not Found")
@@ -30,14 +30,15 @@ func (s CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 
 func (s CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
 
-	var rows *sql.Rows
 	var err error
+	customers := make([]Customer, 0)
+
 	if status == "" {
 		findAllSql := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers"
-		rows, err = s.client.Query(findAllSql)
+		err = s.client.Select(&customers, findAllSql)
 	} else {
 		findAllSql := "SELECT customer_id, name, city, zipcode, date_of_birth, status from customers WHERE status = ?"
-		rows, err = s.client.Query(findAllSql, status)
+		err = s.client.Select(&customers, findAllSql, status)
 	}
 
 	if err != nil {
@@ -45,22 +46,12 @@ func (s CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 		return nil, errs.NewNotExpectedError("database Connection Error")
 	}
 
-	customers := make([]Customer, 0)
-	for rows.Next() {
-		var c Customer
-		err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.DataofBirth, &c.Status)
-		if err != nil {
-			logger.Error("error while query scanning customers, " + err.Error())
-			return nil, errs.NewNotExpectedError(err.Error())
-		}
-		customers = append(customers, c)
-	}
 	return customers, nil
 }
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
 
-	client, err := sql.Open("mysql", "root:00000@/banking")
+	client, err := sqlx.Open("mysql", "root:0000@/banking")
 	if err != nil {
 		panic(err)
 	}
