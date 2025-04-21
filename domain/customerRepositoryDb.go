@@ -22,7 +22,7 @@ func (s CustomerRepositoryDb) ById(id string) (*Customer, *errs.AppError) {
 			return nil, errs.NewNotFoundError("Customer Not Found")
 		}
 		logger.Error("error while scan customer, " + err.Error())
-		return nil, errs.NewNotExpectedError("unexpected database error")
+		return nil, errs.NewUnexpectedError("unexpected database error")
 	}
 	return &c, nil
 }
@@ -42,13 +42,13 @@ func (s CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError
 
 	if err != nil {
 		logger.Error("error while query customer table, " + err.Error())
-		return nil, errs.NewNotExpectedError("database Connection Error")
+		return nil, errs.NewUnexpectedError("database Connection Error")
 	}
 
 	return customers, nil
 }
 
-func NewCustomerRepositoryDb(dbClient* sqlx.DB) CustomerRepositoryDb {
-	
+func NewCustomerRepositoryDb(dbClient *sqlx.DB) CustomerRepositoryDb {
+
 	return CustomerRepositoryDb{dbClient}
 }

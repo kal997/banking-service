@@ -18,22 +18,36 @@ func Start() {
 
 	sanityCheck()
 
-	// wiring
-	// we choose :
-	// stub repo (instead of DB)
-	// Default Service (the main business logic)
+	router := mux.NewRouter()
 
 	dbClient := getDbClient()
-	//ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryStub())}
-	ch := CustomerHandler{service.NewCustomerService(domain.NewCustomerRepositoryDb(dbClient))}
-	ah := AccountHandler{service.NewAccountService(domain.NewAccountRepositoryDb(dbClient))}
-	
 
-	router := mux.NewRouter()
-	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet)                  //  method matcher
-	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.GetCustomer).Methods(http.MethodGet) //  method matcher
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.NewAccount).Methods(http.MethodPost)
+	customerRepoDb := domain.NewCustomerRepositoryDb(dbClient)
+	customerService := service.NewCustomerService(customerRepoDb)
 
+	accountRepoDb := domain.NewAccountRepositoryDb(dbClient)
+	accountService := service.NewAccountService(accountRepoDb)
+
+	authRepoDb := domain.NewAuthRepositoryDb(dbClient)
+	authService := service.NewLoginService(authRepoDb)
+
+	ch := CustomerHandler{service: customerService}
+	ah := AccountHandler{service: accountService}
+	authh := AuthHandler{service: authService}
+
+	router.
+		HandleFunc("/customers", ch.GetAllCustomers).
+		Methods(http.MethodGet)
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}", ch.GetCustomer).
+		Methods(http.MethodGet)
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.MakeTransaction).
+		Methods(http.MethodPost)
+
+	router.
+		HandleFunc("/login", authh.Login).
+		Methods(http.MethodPost)
 
 	logger.Info("starting server ..")
 	address := os.Getenv("SERVER_ADDRESS")
