@@ -12,6 +12,10 @@ type NewAccountRequest struct {
 	Amount      float64 `json:"amount"`
 }
 
+type NewAccountResponse struct {
+	AccountId string `json:"account_id"`
+}
+
 // thhe request nows how to validate itself, thats why we put validate here
 func (r NewAccountRequest) Validate() *errs.AppError {
 	if r.Amount < 5000 {
