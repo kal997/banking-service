@@ -8,3 +8,5 @@ type LoginRequest struct {
 type LoginResponse struct {
 	AccessToken string `json:"accesstoken"`
 }
+
+

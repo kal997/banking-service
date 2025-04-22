@@ -28,27 +28,47 @@ func Start() {
 	accountRepoDb := domain.NewAccountRepositoryDb(dbClient)
 	accountService := service.NewAccountService(accountRepoDb)
 
-	authRepoDb := domain.NewAuthRepositoryDb(dbClient)
-	authService := service.NewLoginService(authRepoDb)
+	authRepoDb := domain.NewRemoteAuthRepository(dbClient)
+	authService := service.NewAuthService(authRepoDb, domain.GetRolePermissions())
 
 	ch := CustomerHandler{service: customerService}
 	ah := AccountHandler{service: accountService}
-	authh := AuthHandler{service: authService}
+	authh := AuthMiddleware{service: authService}
 
 	router.
 		HandleFunc("/customers", ch.GetAllCustomers).
-		Methods(http.MethodGet)
+		Methods(http.MethodGet).
+		Name("GetAllCustomers")
 	router.
 		HandleFunc("/customers/{customer_id:[0-9]+}", ch.GetCustomer).
-		Methods(http.MethodGet)
+		Methods(http.MethodGet).
+		Name("GetCustomer")
+
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.NewAccount).
+		Methods(http.MethodPost).
+		Name("NewAccount")
 	router.
 		HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.MakeTransaction).
-		Methods(http.MethodPost)
+		Methods(http.MethodPost).
+		Name("NewTransaction")
 
 	router.
-		HandleFunc("/login", authh.Login).
-		Methods(http.MethodPost)
+		HandleFunc("/auth/login", authh.Login).
+		Methods(http.MethodPost).
+		Name("Login")
 
+	router.
+		HandleFunc("/auth/verify", authh.Verify).
+		Methods(http.MethodGet).
+		Name("Verify")
+
+	// adds authorization middleware to recieve the requests, dispatch the user request + verification info
+	// to Verify endpoint, if the user is authorized, will pass the control to the user requested endpoint, else
+	// return unauthorized
+	router.Use(authh.authorizationHandler())
+
+	// starting server
 	logger.Info("starting server ..")
 	address := os.Getenv("SERVER_ADDRESS")
 	port := os.Getenv("SERVER_PORT")

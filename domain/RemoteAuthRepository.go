@@ -8,11 +8,11 @@ import (
 	"github.com/kal997/banking/logger"
 )
 
-type AuthRepositoryDb struct {
+type RemoteAuthRepository struct {
 	client *sqlx.DB
 }
 
-func (ar AuthRepositoryDb) FindBy(username string, password string) (*Login, *errs.AppError) {
+func (ar RemoteAuthRepository) FindBy(username string, password string) (*Login, *errs.AppError) {
 	var login Login
 	sqlVerify := `SELECT MAX(username) as username, u.customer_id, MAX(role) as role, group_concat(a.account_id) as account_numbers FROM users u
                   LEFT JOIN accounts a ON a.customer_id = u.customer_id
@@ -30,6 +30,8 @@ func (ar AuthRepositoryDb) FindBy(username string, password string) (*Login, *er
 	return &login, nil
 }
 
-func NewAuthRepositoryDb(client *sqlx.DB) AuthRepositoryDb {
-	return AuthRepositoryDb{client: client}
+
+
+func NewRemoteAuthRepository(client *sqlx.DB) RemoteAuthRepository {
+	return RemoteAuthRepository{client: client}
 }
