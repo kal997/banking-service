@@ -17,8 +17,7 @@ type DefaultAccountService struct {
 func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError) {
 
 	// validate the request
-	appErr := req.Validate()
-	if appErr != nil {
+	if appErr := req.Validate(); appErr != nil {
 		return nil, appErr
 	}
 
@@ -31,16 +30,15 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 		Amount:      req.Amount,
 		Status:      "1",
 	}
-	newAccount, err := s.repo.Save(a)
-	if err != nil {
+	if newAccount, err := s.repo.Save(a); err != nil {
 		return nil, err
+	} else {
+
+		// in response; transform from domain to dto
+		return newAccount.ToNewAccountResponseDto(), nil
+
 	}
-
-	// in response; transform from domain to dto
-	responseDto := newAccount.ToNewAccountResponseDto()
-	return &responseDto, nil
 }
-
 
 func (s DefaultAccountService) MakeTransaction(dtoRequest dto.TransactionRequest) (*dto.TransactionResponse, *errs.AppError) {
 
