@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/kal997/banking-lib/logger"
@@ -28,12 +29,8 @@ func Start() {
 	accountRepoDb := domain.NewAccountRepositoryDb(dbClient)
 	accountService := service.NewAccountService(accountRepoDb)
 
-	authRepoDb := domain.NewRemoteAuthRepository(dbClient)
-	authService := service.NewAuthService(authRepoDb, domain.GetRolePermissions())
-
 	ch := CustomerHandler{service: customerService}
 	ah := AccountHandler{service: accountService}
-	authh := AuthMiddleware{service: authService}
 
 	router.
 		HandleFunc("/customers", ch.GetAllCustomers).
@@ -53,25 +50,16 @@ func Start() {
 		Methods(http.MethodPost).
 		Name("NewTransaction")
 
-	router.
-		HandleFunc("/auth/login", authh.Login).
-		Methods(http.MethodPost).
-		Name("Login")
-
-	router.
-		HandleFunc("/auth/verify", authh.Verify).
-		Methods(http.MethodGet).
-		Name("Verify")
-
 	// adds authorization middleware to recieve the requests, dispatch the user request + verification info
 	// to Verify endpoint, if the user is authorized, will pass the control to the user requested endpoint, else
 	// return unauthorized
-	router.Use(authh.authorizationHandler())
+	am := AuthMiddleware{domain.NewRemoteAuthRepository()}
+	router.Use(am.authorizationHandler())
 
 	// starting server
-	logger.Info("starting server ..")
 	address := os.Getenv("SERVER_ADDRESS")
 	port := os.Getenv("SERVER_PORT")
+	logger.Info(fmt.Sprintf("starting Banking server on %s %s..", address, port))
 	logger.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", address, port), router).Error())
 
 }
@@ -80,6 +68,11 @@ func sanityCheck() {
 	if os.Getenv("SERVER_ADDRESS") == "" {
 		log.Fatal("SERVER_ADDRESS is missing..")
 
+	}
+
+	
+	if os.Getenv("AUTH_SERVER_PORT") == "" {
+		log.Fatal("AUTH_SERVER_PORT is missing..")
 	}
 
 	if os.Getenv("SERVER_PORT") == "" {
@@ -111,6 +104,7 @@ func getDbClient() *sqlx.DB {
 	dbAddr := os.Getenv("DB_ADDR")
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
+	
 
 	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPasWD, dbAddr, dbPort, dbName)
 	client, err := sqlx.Open("mysql", dataSource)
