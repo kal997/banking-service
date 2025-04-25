@@ -42,3 +42,23 @@ func Test_should_return_error_when_amount_is_less_than_zero(t *testing.T) {
 		t.Error("Invalid code while validating amount")
 	}
 }
+
+
+func Test_should_return_nil_when_transaction_is_valid(t *testing.T) {
+	//AAA
+
+	// Arrange
+	transaction := TransactionRequest{Amount: 500, TransactionType: "deposit"}
+
+	// Act
+	appErr := transaction.Validate()
+
+	// Assert
+	if appErr != nil {
+		t.Error("Invalid AppErr while validating amount")
+	}
+
+	
+}
+
+
