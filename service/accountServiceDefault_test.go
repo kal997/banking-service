@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kal997/banking-lib/errs"
 	realdomain "github.com/kal997/banking/domain"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/errs"
 	"github.com/kal997/banking/mocks/domain"
 )
 

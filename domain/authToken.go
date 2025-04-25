@@ -2,8 +2,8 @@ package domain
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"github.com/kal997/banking/errs"
-	"github.com/kal997/banking/logger"
+	"github.com/kal997/banking-lib/errs"
+	"github.com/kal997/banking-lib/logger"
 )
 
 type AuthToken struct {

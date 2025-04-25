@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/kal997/banking/errs"
+import "github.com/kal997/banking-lib/errs"
 
 const WITHDRAWAL = "withdrawal"
 const DEPOSIT = "deposit"

@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/kal997/banking/logger"
+	"github.com/kal997/banking-lib/logger"
 	"github.com/kal997/banking/service"
 )
 
@@ -47,7 +47,7 @@ func writeResponse(w http.ResponseWriter, code int, data interface{}) {
 	w.WriteHeader(code)
 	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
-		logger.Error("Encode failed with err "+ err.Error())
+		logger.Error("Encode failed with err " + err.Error())
 		panic(err)
 	}
 }

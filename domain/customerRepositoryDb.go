@@ -5,8 +5,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/kal997/banking/errs"
-	"github.com/kal997/banking/logger"
+	"github.com/kal997/banking-lib/errs"
+	"github.com/kal997/banking-lib/logger"
 )
 
 type CustomerRepositoryDb struct {

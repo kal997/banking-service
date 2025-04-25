@@ -7,10 +7,10 @@ import (
 	"net/url"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/kal997/banking-lib/errs"
+	"github.com/kal997/banking-lib/logger"
 	"github.com/kal997/banking/domain"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/errs"
-	"github.com/kal997/banking/logger"
 )
 
 type DefaultAuthService struct {

@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/kal997/banking-lib/logger"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/logger"
 	"github.com/kal997/banking/service"
 )
 

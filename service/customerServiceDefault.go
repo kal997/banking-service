@@ -1,9 +1,9 @@
 package service
 
 import (
+	"github.com/kal997/banking-lib/errs"
 	"github.com/kal997/banking/domain"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/errs"
 )
 
 // the implementaion of the CustomerService interface
