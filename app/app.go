@@ -9,8 +9,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	"github.com/kal997/banking-lib/logger"
 	"github.com/kal997/banking/domain"
-	"github.com/kal997/banking/logger"
 	"github.com/kal997/banking/service"
 )
 

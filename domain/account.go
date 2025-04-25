@@ -3,8 +3,8 @@ package domain
 import (
 	"time"
 
+	"github.com/kal997/banking-lib/errs"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/errs"
 )
 
 const dbTSLayout = "2006-01-02 15:04:05"

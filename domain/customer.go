@@ -1,8 +1,8 @@
 package domain // bussiness side/domain -> repo interface
 
 import (
+	"github.com/kal997/banking-lib/errs"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/errs"
 )
 
 type Customer struct {
@@ -14,24 +14,23 @@ type Customer struct {
 	Status      string
 }
 
-func (c Customer) statusAsText() string{
+func (c Customer) statusAsText() string {
 	statusAsText := "Active"
-	if c.Status == "0"{
+	if c.Status == "0" {
 		statusAsText = "Inactive"
-	} 
+	}
 	return statusAsText
 }
 
-func (c Customer) ToDto() dto.CustomerResponse{
+func (c Customer) ToDto() dto.CustomerResponse {
 
-	
 	return dto.CustomerResponse{
-		Id: c.Id,
-		Name: c.Name,
-		City: c.City,
-		Zipcode: c.Zipcode,
+		Id:          c.Id,
+		Name:        c.Name,
+		City:        c.City,
+		Zipcode:     c.Zipcode,
 		DataofBirth: c.DataofBirth,
-		Status: c.statusAsText(),
+		Status:      c.statusAsText(),
 	}
 }
 

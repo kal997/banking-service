@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/gorilla/mux"
+	"github.com/kal997/banking-lib/errs"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/errs"
 	"github.com/kal997/banking/mocks/service"
 )
 

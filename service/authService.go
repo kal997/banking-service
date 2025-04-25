@@ -1,8 +1,8 @@
 package service
 
 import (
+	"github.com/kal997/banking-lib/errs"
 	"github.com/kal997/banking/dto"
-	"github.com/kal997/banking/errs"
 )
 
 type AuthService interface {

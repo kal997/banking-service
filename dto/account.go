@@ -3,7 +3,7 @@ package dto
 import (
 	"strings"
 
-	"github.com/kal997/banking/errs"
+	"github.com/kal997/banking-lib/errs"
 )
 
 type NewAccountRequest struct {
